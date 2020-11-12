@@ -4,7 +4,7 @@ This application illustrates how to use MongoDB from a Java program.
 
 ## Tutorial
 
-It might be a good idea to follow the tutorial at `https://developer.mongodb.com/quickstart/java-setup-crud-operations`
+It might be a good idea to follow the tutorial at https://developer.mongodb.com/quickstart/java-setup-crud-operations
 
 ## How to Execute
 
