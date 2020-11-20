@@ -46,7 +46,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>se.kth.iv1351.weatherstat.dataload.DataLoader</mainClass>
+          <mainClass>se.kth.iv1351.weatherstat.App</mainClass>
           <cleanupDaemonThreads>false</cleanupDaemonThreads>
         </configuration>
       </plugin>
