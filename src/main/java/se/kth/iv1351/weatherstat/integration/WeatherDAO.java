@@ -23,11 +23,15 @@
 
 package se.kth.iv1351.weatherstat.integration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
@@ -37,8 +41,8 @@ import org.slf4j.LoggerFactory;
 /**
  * This data access object (DAO) encapsulates all database calls in the weather
  * application. No code outside this class shall have any knowledge about the
- * database. The URL of the MongoDB database server hosting the weather
- * database is read from the environment variable WEATHERDB_SERVER.
+ * database. The URL of the MongoDB database server hosting the weather database
+ * is read from the environment variable WEATHERDB_SERVER.
  */
 public class WeatherDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(WeatherDAO.class);
@@ -58,12 +62,54 @@ public class WeatherDAO {
      * 
      * @param observations The observations to store.
      */
-    public void storeObservation(List<String> observations) {
+    public void storeObservations(List<String> observations) {
         MongoDatabase weatherDb = connection.getDatabase(DB_NAME);
         MongoCollection<Document> weatherColl = weatherDb.getCollection(COLLECTION_NAME);
         for (String observation : observations) {
             weatherColl.insertOne(Document.parse(observation));
         }
+    }
+
+    /**
+     * Returns a list containing all stored temperature readings. A field in a
+     * stored observation is assumed to contain a temperature if it's name
+     * is <code>temp</code>. The list is empty if there are no such observations.
+     * 
+     * @return A list coexport OPENWEATHERMAP_KEY="d9869b9d64db4da692e15fdd7d318f85"
+ntaining all stored temperature readings.
+     */
+    public List<Double> findAllTempReadings() {
+        MongoDatabase weatherDb = connection.getDatabase(DB_NAME);
+        MongoCollection<Document> weatherColl = weatherDb.getCollection(COLLECTION_NAME);
+        MongoCursor<Document> observations = weatherColl.find().iterator();
+
+        List<Double> tempReadings = new ArrayList<>();
+        while (observations.hasNext()) {
+            Double tempReading = extractTempReading(observations.next());
+            if (tempReading != null) {
+                tempReadings.add(tempReading);
+            }
+        }
+        return tempReadings;
+    }
+
+    private Double extractTempReading(Document observation) {
+        String tempFieldName = "temp";
+        Map<String, Object> flattenedDoc = flattenDoc(observation);
+        return (Double)flattenedDoc.get(tempFieldName);
+    }
+
+    private Map<String, Object> flattenDoc(Document doc) {
+        Map<String, Object> flattenedDoc = new HashMap<>();
+        for (String fieldName : doc.keySet()) {
+            Object value = doc.get(fieldName);
+            if (value instanceof Document) {
+                flattenedDoc.putAll(flattenDoc((Document)value));
+            } else {
+                flattenedDoc.put(fieldName, value);
+            }
+        }
+        return flattenedDoc;
     }
 
     private void connectToWeatherDB() {

@@ -35,20 +35,22 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * This class is responsible for calling weather apis.
+ * This class is responsible for calling weather apis. Two hardcoded APIs are
+ * used, openweathermap,org and weatherbit.io. The API keys shall be stored in
+ * the environment variables OPENWEATHERMAP_KEY and WEATHERBIT_KEY.
  */
-public class ApiClient {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ApiClient.class);
+public class WeatherApiClient {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WeatherApiClient.class);
   private List<String> weatherServices = new ArrayList<>();
 
   /**
    * Creates a new instance and adds hardcoded APIs.
    */
-  public ApiClient() {
+  public WeatherApiClient() {
+    weatherServices.add(
+        "http://api.openweathermap.org/data/2.5/weather?q=stockholm,se&APPID=" + System.getenv("OPENWEATHERMAP_KEY"));
     weatherServices
-        .add("http://api.openweathermap.org/data/2.5/weather?q=stockholm,se&APPID=8ef1b0765aa3ba4f779eefb389472313");
-    weatherServices
-        .add("https://api.weatherbit.io/v2.0/current?city=Stockolm&country=SE&key=51aa58254ac14267944f276c5e7a46e3");
+        .add("https://api.weatherbit.io/v2.0/current?city=Stockolm&country=SE&key=" + System.getenv("WEATHERBIT_KEY"));
   }
 
   /**
@@ -74,7 +76,7 @@ public class ApiClient {
       } catch (IOException ioe) {
         LOGGER.error("Could not load observation.", ioe);
       }
-      
+
     }
 
     return responses;

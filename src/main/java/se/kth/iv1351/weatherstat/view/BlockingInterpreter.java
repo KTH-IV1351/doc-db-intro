@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import se.kth.iv1351.weatherstat.controller.Controller;
-import se.kth.iv1351.weatherstat.integration.ApiClient;
+import se.kth.iv1351.weatherstat.integration.WeatherApiClient;
 
 /**
  * Reads and interprets user commands. This command interpreter is blocking, the
@@ -39,7 +39,7 @@ import se.kth.iv1351.weatherstat.integration.ApiClient;
  * executed.
  */
 public class BlockingInterpreter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherApiClient.class);
     private static final String PROMPT = "> ";
     private final Scanner console = new Scanner(System.in);
     private Controller ctrl;
@@ -92,6 +92,7 @@ public class BlockingInterpreter {
                     case STOP:
                         break;
                     case AVG:
+                        ctrl.getAverageTemp();
                         break;
                     default:
                         System.out.println("illegal command");

@@ -25,7 +25,7 @@ package se.kth.iv1351.weatherstat.controller;
 
 import java.util.List;
 
-import se.kth.iv1351.weatherstat.integration.ApiClient;
+import se.kth.iv1351.weatherstat.integration.WeatherApiClient;
 import se.kth.iv1351.weatherstat.integration.WeatherDAO;
 
 /**
@@ -36,7 +36,7 @@ import se.kth.iv1351.weatherstat.integration.WeatherDAO;
  */
 public class Controller {
     private final WeatherDAO weatherDb;
-    private final ApiClient apiClient;
+    private final WeatherApiClient weatherApi;
 
     /**
      * Creates a new instance, and retrieves a connection to the database.
@@ -45,7 +45,7 @@ public class Controller {
      */
     public Controller() {
         weatherDb = new WeatherDAO();
-        apiClient = new ApiClient();
+        weatherApi = new WeatherApiClient();
     }
 
     /**
@@ -56,6 +56,18 @@ public class Controller {
      * codes are silently ignored.
      */
     public void loadFromAllApis() {
-        List<String> loadedData = apiClient.loadFromAllApis();
+        List<String> loadedData = weatherApi.loadFromAllApis();
+        weatherDb.storeObservations(loadedData);
+    }
+
+    /**
+     * @return The average of all stored temperature observations.
+     */
+    public float getAverageTemp() {
+        List<Double> tempReadings = weatherDb.findAllTempReadings();
+        for(Double reading : tempReadings) {
+            System.out.println(reading);
+        }
+        return 0;
     }
 }
