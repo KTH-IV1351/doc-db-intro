@@ -15,5 +15,5 @@ It might be a good idea to learn the basics of the MongoDB Java driver by follow
     * `WEATHERDB_SERVER` The url to which the MongoDB driver will connect. How to find the URL is explained in the Atlas quickstart guide mentioned above.
     * `OPENWEATHERMAP_KEY` The API key for https://www.openweathermap.org/ from where weather observations are loaded. You must register to get a key, but registering is free.
     * `WEATHERBIT_KEY` The API key for https://www.weatherbit.io/ from where weather observations are loaded. You must register to get a key, but registering is free.
-1. Build the project with the command mvn install
-1. Run the program with the command mvn exec:java
+1. Build the project with the command `mvn install`
+1. Run the program with the command `mvn exec:java`
