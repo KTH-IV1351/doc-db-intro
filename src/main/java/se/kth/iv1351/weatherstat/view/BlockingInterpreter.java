@@ -24,7 +24,6 @@
 
 package se.kth.iv1351.weatherstat.view;
 
-
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -88,11 +87,13 @@ public class BlockingInterpreter {
                         ctrl.loadFromAllApis();
                         break;
                     case START:
+                        ctrl.startHourlyLoading();
                         break;
                     case STOP:
+                        ctrl.stopHourlyLoading();
                         break;
                     case AVG:
-                        ctrl.getAverageTemp();
+                        System.out.println(String.format("%.2f", ctrl.getAverageTemp()) + " \u00B0C");
                         break;
                     default:
                         System.out.println("illegal command");

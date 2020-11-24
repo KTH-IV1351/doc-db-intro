@@ -24,6 +24,8 @@
 package se.kth.iv1351.weatherstat.controller;
 
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import se.kth.iv1351.weatherstat.integration.WeatherApiClient;
 import se.kth.iv1351.weatherstat.integration.WeatherDAO;
@@ -35,8 +37,9 @@ import se.kth.iv1351.weatherstat.integration.WeatherDAO;
  * the data, and finally tells the DAO to store the updated data (if any).
  */
 public class Controller {
-    private final WeatherDAO weatherDb;
-    private final WeatherApiClient weatherApi;
+    private WeatherDAO weatherDb;
+    private WeatherApiClient weatherApi;
+    private ScheduledThreadPoolExecutor hourlyLoader;
 
     /**
      * Creates a new instance, and retrieves a connection to the database.
@@ -61,13 +64,42 @@ public class Controller {
     }
 
     /**
+     * Starts a separate thread that will call {@link #loadFromAllApis()} once per
+     * hour, starting after one hour. The hourly loading continues until
+     * {@link #stopHourlyLoading()} is called. A call to this method when hourly
+     * loading is already running has no effect.
+     */
+    public void startHourlyLoading() {
+        if (hourlyLoader != null) {
+            return;
+        }
+
+        int noOfIdleThreads = 0;
+        int initialDelay = 1;
+        int interval = 1;
+        hourlyLoader = new ScheduledThreadPoolExecutor(noOfIdleThreads);
+        hourlyLoader.scheduleAtFixedRate(() -> loadFromAllApis(),
+                                         initialDelay, interval, TimeUnit.HOURS);
+    }
+
+    /**
+     * Stops the hourly loading. A call to this method when hourly loading is not
+     * running has no effect.
+     */
+    public void stopHourlyLoading() {
+        if (hourlyLoader == null) {
+            return;
+        }
+        hourlyLoader.shutdown();
+        hourlyLoader = null;
+    }
+
+    /**
      * @return The average of all stored temperature observations.
      */
-    public float getAverageTemp() {
+    public double getAverageTemp() {
         List<Double> tempReadings = weatherDb.findAllTempReadings();
-        for(Double reading : tempReadings) {
-            System.out.println(reading);
-        }
-        return 0;
+        double sumOfTemps = tempReadings.stream().mapToDouble(Double::doubleValue).sum();
+        return sumOfTemps / tempReadings.size();
     }
 }

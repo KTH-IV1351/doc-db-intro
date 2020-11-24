@@ -49,7 +49,7 @@ public enum Command {
      */
     HELP,
     /**
-     * Leave the chat application.
+     * Leaves the chat application.
      */
     QUIT,
     /**
