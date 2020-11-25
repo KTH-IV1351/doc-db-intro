@@ -1,6 +1,6 @@
 # Introduction to Document Databases and MongoDB
 
-This application illustrates how to use MongoDB from a Java program.
+This application downloads weather observation from different meteorological institutes, and displays weather statistics. The purpose is to illustrate how MongoDB is accessed from a Java program.
 
 ## Tutorial
 
